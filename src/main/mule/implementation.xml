@@ -17,7 +17,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-payload[1].firstname]]></ee:set-payload>
+payload[2].firstname]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="012821a3-ca10-4569-ae6a-b1c83ccf08a5" message="#[payload]"/>
