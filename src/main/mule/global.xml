@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<global-property doc:name="Global Property" doc:id="2c6f537e-b3d2-4902-bed5-1f9f93e25c00" name="env" value="local"/>
+	<configuration-properties doc:name="Configuration properties" doc:id="d1b3d190-1ca7-478e-b483-964f51359eaa" file="${env}.properties" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="af3a08ba-f219-48ca-a401-cce8879ec9e2" >
+		<http:listener-connection host="${http.host}" port="${http.port}" />
+	</http:listener-config>
+	<db:config name="Database_Config_new-test" doc:name="Database Config" doc:id="ea308d85-f7eb-431b-a263-60ec358de848" >
+		<db:my-sql-connection host="${bdd.host}" port="${bdd.port}" user="${bdd.user}" database="${bddclients.database}" />
+	</db:config>
+	<db:config name="Database_Config-dbflex" doc:name="Database Config" doc:id="8e9ddeb8-f6e3-4f24-90a0-c0a3662a3fd9" >
+		<db:my-sql-connection host="${bdd.host}" port="${bdd.port}" user="${bdd.user}" database="${bddRestaurants.database}" />
+	</db:config>
+</mule>
