@@ -1,0 +1,13 @@
+%dw 2.0
+
+type auto_b2ca9bb7_fb3e_4dff_8acf_4b837b001538_Input_Payload = {
+  phone: String, 
+  image_resto: String, 
+  nom_restaurant: String, 
+  adresse: String, 
+  ID?: Number, 
+  userId: Number, 
+  siret: String, 
+  _?: Any
+}
+

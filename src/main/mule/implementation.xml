@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getAllClients" doc:id="920e12a5-f89e-4ed6-948a-cb06a92697b3" >
+		<http:listener doc:name="GET /getAllClients" doc:id="f9e63294-5446-4284-81f6-0ef9e784af6d" config-ref="HTTP_Listener_config" path="/getAllClients" allowedMethods="GET"/>
+		<db:select doc:name="Select" doc:id="0ad93839-71c3-47d1-9369-1c1faedd67e1" config-ref="Database_Config_new-test">
+			<db:sql ><![CDATA[SELECT * FROM client WHERE categorie = :categorie]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"categorie": message.attributes.queryParams.categorie default ""}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="2a98712d-be96-495c-b5bf-9644bdba33a3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload[1].firstname]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="012821a3-ca10-4569-ae6a-b1c83ccf08a5" message="#[payload]"/>
+	</flow>
+	<flow name="createClient" doc:id="5d4c867d-2f49-447a-83b5-c13dd425c4cb" >
+		<http:listener doc:name="POST /getAllClients" doc:id="e976429e-7ead-40ea-aec5-011c0ff211b8" config-ref="HTTP_Listener_config" path="/getAllClients" allowedMethods="POST"/>
+		<logger level="INFO" doc:name="Logger" doc:id="609b4007-d00d-4c7f-bde8-05d9c174025b" message="#[payload]"/>
+		<db:insert doc:name="Insert" doc:id="b77a4fd3-05f8-485d-a70a-c763a991e044" config-ref="Database_Config_new-test">
+			<db:sql ><![CDATA[insert into client (firstname, categorie, name, birth) values (:firstname, :categorie, :name, :birth)
+
+
+ ]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+ "firstname": payload.firstname,
+ "categorie": payload.categorie,
+ "name": payload.name, 
+ "birth": payload.birth
+}]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="Logger" doc:id="573fa182-e90e-432a-a301-b4af0068d6df" message="#[output application/json --- payload]"/>
+	</flow>
+	<flow name="getAllRestaurants" doc:id="80b9d8e6-4922-4270-81d2-b244a36c5a4c" >
+		<http:listener doc:name="GET /getAllRestaurants" doc:id="d6c34f02-d38d-49b3-ae13-b7b66b4e14f2" config-ref="HTTP_Listener_config" path="/getAllRestaurants" allowedMethods="GET" />
+		<db:select doc:name="Select" doc:id="737eab27-2fa4-4ceb-8761-ee2f3cea3594" config-ref="Database_Config-dbflex" >
+			<db:sql ><![CDATA[SELECT * FROM restaurants ]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="4024d90f-6d4b-44fb-ae0c-aaa55333aa24" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="a2df4d93-44a3-46d1-b733-b635a4c0c953" message="#[payload]" />
+	</flow>
+	<flow name="getClientsById" doc:id="0641ad16-7a42-44f1-bc66-7458d5401d1a" >
+		<http:listener doc:name="GET /getClientsById" doc:id="2338302d-9c3b-48f3-901c-895fe08b76e3" config-ref="HTTP_Listener_config" path="/getAllClients/{ID}" allowedMethods="GET" />
+		<db:select doc:name="Select" doc:id="27815693-b90e-40a2-97c2-27b8614914d8" config-ref="Database_Config_new-test" >
+			<db:sql ><![CDATA[SELECT * FROM client WHERE id = :ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"ID": message.attributes.uriParams.ID}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="6bef9139-0c98-4b5c-8f7a-6192fc3bb074" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="5a302c3e-9b15-4ee6-b73e-83aa9355d3bd" message="#[payload]" />
+	</flow>
+	<flow name="getRestaurantById" doc:id="b9c426aa-463a-48c7-bcef-d55ebb9c38e1" >
+		<http:listener doc:name="GET /getAllRestaurants" doc:id="0ea52ca5-8e6e-4ea2-8446-4e96f7534389" config-ref="HTTP_Listener_config" path="/getAllRestaurants/{ID}" allowedMethods="GET" />
+		<db:select doc:name="Select" doc:id="a0604829-007d-4d46-bed4-93de2f518c25" config-ref="Database_Config-dbflex" >
+			<db:sql ><![CDATA[SELECT * FROM restaurants WHERE restaurant_id = :ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"ID": message.attributes.uriParams.ID}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="aac08eab-799a-4c40-97a1-5c01bd77a8c2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4897e4a7-898d-4a9b-9ac3-482516589871" message="#[payload]" />
+	</flow>
+	<flow name="createRestaurant" doc:id="b2ca9bb7-fb3e-4dff-8acf-4b837b001538">
+		<http:listener doc:name="POST /createRestaurant" doc:id="4b0ecfc3-fc34-4ce1-8a9a-27e80da0e0ab" config-ref="HTTP_Listener_config" path="/getAllRestaurants" allowedMethods="POST" />
+		<logger level="INFO" doc:name="Logger" doc:id="ac32cfaa-9860-4f96-be3e-47b3fab10fac" message="#[payload]" />
+		<db:insert doc:name="Insert" doc:id="6fcf0786-382b-4e83-a6f7-a610712b1b10" config-ref="Database_Config-dbflex">
+			<db:sql><![CDATA[insert into restaurants (phone,user_id,image_resto,nom_restaurant,adresse,siret) values (:phone, :user_id, :image_resto, :nom_restaurant,:adresse,:siret)
+
+
+ ]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+ "phone": payload.phone,
+ "user_id": payload.user_id,
+ "image_resto": payload.image_resto, 
+ "nom_restaurant": payload.nom_restaurant,
+ "adresse": payload.adresse,
+ "siret": payload.siret,
+}]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="Logger" doc:id="b4d9e849-f2cf-4b9d-9c99-bf230fda81e0" message="#[output application/json --- payload]" />
+	</flow>
+	<flow name="deleteRestaurant" doc:id="054963cc-261a-415b-b4ca-3add134b57b7" >
+		<http:listener doc:name="DELETE /deleteRestaurant" doc:id="4172e407-f529-40cd-96ff-2149087a4383" config-ref="HTTP_Listener_config" path="/getAllRestaurants/{ID}" allowedMethods="DELETE" />
+		<db:delete doc:name="Delete" doc:id="a95d4a17-5f17-4d86-b826-7f9365031dbe" config-ref="Database_Config-dbflex">
+			<db:sql ><![CDATA[DELETE FROM restaurants WHERE restaurant_id = :ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"ID": message.attributes.uriParams.ID}]]]></db:input-parameters>
+		</db:delete>
+		<logger level="INFO" doc:name="Logger1" doc:id="86a81576-6fa6-4089-a6a0-cf23852e617c" message="#[output application/json --- payload]" />
+	</flow>
+	<flow name="deleteClient" doc:id="1359ab44-d2c7-457c-b50c-1909a1f4fd62" >
+		<http:listener doc:name="DELETE /deleteClient" doc:id="5872f2ac-1f5a-4705-a93c-66be702cc4da" config-ref="HTTP_Listener_config" path="/getAllClients/{ID}" allowedMethods="DELETE" />
+		<db:delete doc:name="Delete" doc:id="dec6d67b-2f46-41a5-959f-4436b4aa8662" config-ref="Database_Config_new-test" >
+			<db:sql ><![CDATA[DELETE FROM client WHERE id = :ID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"ID": message.attributes.uriParams.ID}]]]></db:input-parameters>
+		</db:delete>
+		<logger level="INFO" doc:name="Logger" doc:id="8c2fd2a3-fe1d-4b90-ae0d-d0da6d662513" message="#[output application/json --- payload]" />
+	</flow>
+</mule>
